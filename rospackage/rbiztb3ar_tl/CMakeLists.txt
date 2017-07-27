@@ -1,0 +1,56 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(rbiztb3ar_tl)
+
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+#  geometry_msgs
+  rbiztb3ar_msgs
+  genmsg
+)
+
+add_message_files(DIRECTORY msg
+  FILES
+#  PadOrder.msg
+#  AvailableItemList.msg
+#  ServiceStatus.msg
+)
+
+add_service_files(DIRECTORY srv
+  FILES
+#  InitTurtlebotPose.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+#  geometry_msgs
+)
+
+
+catkin_package(
+# INCLUDE_DIRS include
+# LIBRARIES key_to_vel_pkg
+# CATKIN_DEPENDS roscpp rospy
+# DEPENDS system_lib
+)
+
+include_directories(include ${catkin_INCLUDE_DIRS})
+
+add_executable(traffic_light_monitor src/traffic_light_monitor.cpp)
+target_link_libraries(traffic_light_monitor ${catkin_LIBRARIES})
+add_dependencies(traffic_light_monitor rbiztb3ar_tl_generate_messages_cpp)
+
+#add_executable(service_core src/service_core.cpp)
+#target_link_libraries(service_core ${catkin_LIBRARIES})
+#add_dependencies(service_core rbiztb3ar_tl_generate_messages_cpp)
+
+#add_executable(pad_virtual src/pad_virtual.cpp)
+#target_link_libraries(pad_virtual ${catkin_LIBRARIES})
+#add_dependencies(pad_virtual rbiztb3ar_tl_generate_messages_cpp)
+
+#add_executable(pose_initialization src/pose_initialization.cpp)
+#target_link_libraries(pose_initialization ${catkin_LIBRARIES})
+#add_dependencies(pose_initialization rbiztb3ar_tl_generate_messages_cpp)
+
+#add_executable(call_initial_pose src/call_initial_pose.cpp)
+#target_link_libraries(call_initial_pose ${catkin_LIBRARIES})
+#add_dependencies(call_initial_pose rbiztb3ar_tl_generate_messages_cpp)

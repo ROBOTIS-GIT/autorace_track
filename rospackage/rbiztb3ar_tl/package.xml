@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>rbiztb3ar_tl</name>
+  <version>0.0.1</version>
+  <description>The rbiztb3ar_tl package</description>
+
+  <maintainer email="rwjung@robotis.com">leon</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rbiztb3ar_msgs</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rbiztb3ar_msgs</run_depend>
+
+  <export> </export>
+</package>
