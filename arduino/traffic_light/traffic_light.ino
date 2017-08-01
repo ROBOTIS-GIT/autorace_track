@@ -6,11 +6,11 @@
 ||---||
 |     |
 ||---||
-|| G ||
+|| Y ||
 ||---||
 |     |
 ||---||
-|| B ||
+|| G ||
 ||---||            |---------|            |---------|            |---------|
 |-----|            | O-----0 |            | O-----0 |            | O-----0 |
   | |              |   DMS   |            |   DMS   |            |   DMS   |
@@ -23,7 +23,7 @@
 
  author : Leon Ryuwoon Jung
  */
-
+// for two DMSs
 #include <OLLO.h>
 OLLO myOLLO;
 
@@ -41,9 +41,9 @@ void setup(){
   myOLLO.begin(2);//DMS Module must be connected at port 2.
   // myOLLO.begin(3);//DMS Module must be connected at port 3.
 
-  pinMode(3, OUTPUT);
-  pinMode(5, OUTPUT);
-  pinMode(6, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
 
   state = WAITING_FOR_ENTER;
 }
@@ -195,27 +195,27 @@ void fnWriteLED(Color led_color)
 {
   if (led_color == LED_RED)
   {
-    digitalWrite(3, HIGH);
-    digitalWrite(5, LOW);
-    digitalWrite(6, LOW);
+    digitalWrite(9, HIGH);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
   }
   else if (led_color == LED_YELLOW)
   {
-    digitalWrite(3, LOW);
-    digitalWrite(5, HIGH);
-    digitalWrite(6, LOW);
+    digitalWrite(9, LOW);
+    digitalWrite(10, HIGH);
+    digitalWrite(11, LOW);
   }
   else if (led_color == LED_GREEN)
   {
-    digitalWrite(3, LOW);
-    digitalWrite(5, LOW);
-    digitalWrite(6, HIGH);
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, HIGH);
   }
   else
   {
-    digitalWrite(3, HIGH);
-    digitalWrite(5, HIGH);
-    digitalWrite(6, HIGH);
+    digitalWrite(9, HIGH);
+    digitalWrite(10, HIGH);
+    digitalWrite(11, HIGH);
   }
 }
 
@@ -239,8 +239,8 @@ void fnSetStopWatch()
 {
   stopwatch_start_time_ = fnGetCurrentTime();
 }
-//
-//
+
+
 // #include <OLLO.h>
 // OLLO myOLLO;
 //
@@ -258,9 +258,9 @@ void fnSetStopWatch()
 //   myOLLO.begin(2);//DMS Module must be connected at port 2.
 //   myOLLO.begin(3);//DMS Module must be connected at port 3.
 //
-//   pinMode(3, OUTPUT);
-//   pinMode(5, OUTPUT);
-//   pinMode(6, OUTPUT);
+//   pinMode(9, OUTPUT);
+//   pinMode(10, OUTPUT);
+//   pinMode(11, OUTPUT);
 //
 //   state = WAITING_FOR_ENTER;
 // }
@@ -323,12 +323,12 @@ void fnSetStopWatch()
 //         is_able_to_pass_ = false;
 //         // is_started[1] = false;
 //       }
-//       else if (fnGetTimeSinceStart() > 8000.0)
-//       {
-//         fnWriteLED(LED_GREEN);
-//         is_able_to_pass_ = true;
-//         // is_started[1] = false;
-//       }
+//       // else if (fnGetTimeSinceStart() > 8000.0)
+//       // {
+//       //   fnWriteLED(LED_GREEN);
+//       //   is_able_to_pass_ = true;
+//       //   // is_started[1] = false;
+//       // }
 //     }
 //     // digitalWrite(3, HIGH);
 //     // digitalWrite(5, LOW);
@@ -336,8 +336,8 @@ void fnSetStopWatch()
 //   }
 //   else if (state == MUST_STOP)
 //   {
-//     if (is_able_to_pass_ == false)
-//     {
+//     // if (is_able_to_pass_ == false)
+//     // {
 //       if (is_started[1] == false)
 //       {
 //         //start stopwatch
@@ -359,7 +359,7 @@ void fnSetStopWatch()
 //           // is_started[1] = false;
 //         }
 //       }
-//     }
+//     // }
 //     // digitalWrite(3, LOW);
 //     // digitalWrite(5, HIGH);
 //     // digitalWrite(6, LOW);
@@ -398,27 +398,27 @@ void fnSetStopWatch()
 // {
 //   if (led_color == LED_RED)
 //   {
-//     digitalWrite(3, HIGH);
-//     digitalWrite(5, LOW);
-//     digitalWrite(6, LOW);
+//     digitalWrite(9, HIGH);
+//     digitalWrite(10, LOW);
+//     digitalWrite(11, LOW);
 //   }
 //   else if (led_color == LED_YELLOW)
 //   {
-//     digitalWrite(3, LOW);
-//     digitalWrite(5, HIGH);
-//     digitalWrite(6, LOW);
+//     digitalWrite(9, LOW);
+//     digitalWrite(10, HIGH);
+//     digitalWrite(11, LOW);
 //   }
 //   else if (led_color == LED_GREEN)
 //   {
-//     digitalWrite(3, LOW);
-//     digitalWrite(5, LOW);
-//     digitalWrite(6, HIGH);
+//     digitalWrite(9, LOW);
+//     digitalWrite(10, LOW);
+//     digitalWrite(11, HIGH);
 //   }
 //   else
 //   {
-//     digitalWrite(3, HIGH);
-//     digitalWrite(5, HIGH);
-//     digitalWrite(6, HIGH);
+//     digitalWrite(9, HIGH);
+//     digitalWrite(10, HIGH);
+//     digitalWrite(11, HIGH);
 //   }
 // }
 //
