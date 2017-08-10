@@ -32,13 +32,9 @@ ros::Subscriber<rbiz_autorace_msgs::DoIt> subTestStateLevelCrossing("test_state/
 /*******************************************************************************
 * Publisher
 *******************************************************************************/
-// Bumpers, cliffs, buttons, encoders, battery of Turtlebot3
-// turtlebot3_msgs::SensorState msgSensorStateLevelCrossing;
-// ros::Publisher sensor_state_pub("sensor_state", &msgSensorStateLevelCrossing);
-
-// std_msgs::Int32 msgSensorStateLevelCrossing;
+// DMS, battery, etc.
 rbiz_autorace_msgs::SensorStateLevelCrossing msgSensorStateLevelCrossing;
-ros::Publisher pubSensorState("sensor_state/level_crossing", &msgSensorStateLevelCrossing);
+ros::Publisher pubSensorStateLevelCrossing("sensor_state/level_crossing", &msgSensorStateLevelCrossing);
 
 /*******************************************************************************
 * Setup function
@@ -50,7 +46,7 @@ void setup()
   nh.getHardware()->setBaud(115200);
   nh.subscribe(subInitStateLevelCrossing);
   nh.subscribe(subTestStateLevelCrossing);
-  nh.advertise(pubSensorState);
+  nh.advertise(pubSensorStateLevelCrossing);
 
   nh.loginfo("Connected to OpenCR board!");
 
@@ -102,7 +98,7 @@ void pbSensorState()
   msgSensorStateLevelCrossing.level_status = level_status_;
   msgSensorStateLevelCrossing.battery = fncheckVoltage();
 
-  pubSensorState.publish(&msgSensorStateLevelCrossing);
+  pubSensorStateLevelCrossing.publish(&msgSensorStateLevelCrossing);
 }
 
 /*******************************************************************************

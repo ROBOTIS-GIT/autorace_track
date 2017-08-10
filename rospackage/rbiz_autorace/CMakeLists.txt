@@ -37,9 +37,9 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-#add_executable(monitor_traffic_light src/monitor_traffic_light.cpp)
-#target_link_libraries(monitor_traffic_light ${catkin_LIBRARIES})
-#add_dependencies(monitor_traffic_light rbiz_autorace_generate_messages_cpp)
+add_executable(monitor_traffic_light src/monitor_traffic_light.cpp)
+target_link_libraries(monitor_traffic_light ${catkin_LIBRARIES})
+add_dependencies(monitor_traffic_light rbiz_autorace_generate_messages_cpp)
 
 add_executable(monitor_level_crossing src/monitor_level_crossing.cpp)
 target_link_libraries(monitor_level_crossing ${catkin_LIBRARIES})
