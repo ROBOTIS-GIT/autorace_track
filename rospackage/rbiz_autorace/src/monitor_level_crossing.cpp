@@ -1,7 +1,7 @@
 #include "ros/ros.h"
-#include "rbiztb3ar_msgs/TrafficLight.h"
-#include "rbiztb3ar_msgs/StateOfTrafficLight.h"
-#include "std_msgs/String.h"
+#include "rbiz_autorace_msgs/SensorStateLevelCrossing.h"
+#include "rbiz_autorace_msgs/DoIt.h"
+// #include "std_msgs/String.h"
 
 // #include "rbiztb3ar_tl/PadOrder.h"
 // #include "rbiztb3ar_tl/AvailableItemList.h"
@@ -11,8 +11,8 @@
 // #include "move_base_msgs/MoveBaseActionResult.h"
 // #include "geometry_msgs/PoseStamped.h"
 
-#include <string.h>
-#include <sstream>
+// #include <string.h>
+// #include <sstream>
 // #include <iostream>
 // #include <sstream>
 
@@ -20,53 +20,32 @@
 // #define ROBOT_NUMBER_TB3G 1
 // #define ROBOT_NUMBER_TB3R 2
 
-class TrafficLightMonitor
+class MonitorLevelCrossing
 {
 public:
-  TrafficLightMonitor()
+  MonitorLevelCrossing()
   {
     // fnInitParam();
 
-    // pub_initial_pose = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("initialpose", 1);
-    // pub_table_pose = nh_.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 1);
-    // pub_twist = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1);
-    //
-    // sub_gather_particle = nh_.subscribe("particlecloud", 1, &ServiceCore::cbGatherParticle, this);
-    //
+    pubInitStateLevelCrossing = nh_.advertise<rbiz_autorace_msgs::DoIt>("init_state/level_crossing", 1);
+    pubTestStateLevelCrossing = nh_.advertise<rbiz_autorace_msgs::DoIt>("test_state/level_crossing", 1);
 
+    subSensorStateLevelCrossing = nh_.subscribe("sensor_state/level_crossing", 1, &MonitorLevelCrossing::cbReceiveSensorStateLevelCrossing, this);
 
+    ros::Rate loop_rate(10);
 
+    loop_rate.sleep();
 
-    // pubServiceStatusPadtb3p = nh_.advertise<std_msgs::String>("/tb3p/service_status", 1);
-    // pubServiceStatusPadtb3g = nh_.advertise<std_msgs::String>("/tb3g/service_status", 1);
-    // pubServiceStatusPadtb3r = nh_.advertise<std_msgs::String>("/tb3r/service_status", 1);
-    //
-    // pub_is_item_available = nh_.advertise<rbiztb3ar_tl::AvailableItemList>("/is_item_available", 1);
-    //
-    // pub_play_sound_tb3p = nh_.advertise<std_msgs::String>("/tb3p/play_sound_file", 1);
-    // pub_play_sound_tb3g = nh_.advertise<std_msgs::String>("/tb3g/play_sound_file", 1);
-    // pub_play_sound_tb3r = nh_.advertise<std_msgs::String>("/tb3r/play_sound_file", 1);
-    //
-    // pubPoseStampedTb3p = nh_.advertise<geometry_msgs::PoseStamped>("/tb3p/move_base_simple/goal", 1);
-    // pubPoseStampedTb3g = nh_.advertise<geometry_msgs::PoseStamped>("/tb3g/move_base_simple/goal", 1);
-    // pubPoseStampedTb3r = nh_.advertise<geometry_msgs::PoseStamped>("/tb3r/move_base_simple/goal", 1);
-    //
-    // // sub_pad_order_tb3p = nh_.subscribe("/tb3p/pad_order", 1, &ServiceCore::cbReceivePadOrder, this);
-    // // sub_pad_order_tb3g = nh_.subscribe("/tb3g/pad_order", 1, &ServiceCore::cbReceivePadOrder, this);
-    // // sub_pad_order_tb3r = nh_.subscribe("/tb3r/pad_order", 1, &ServiceCore::cbReceivePadOrder, this);
-    //
-    // sub_pad_order_tb3p = nh_.subscribe("/tb3p/pad_order", 1, &ServiceCore::cbReceivePadOrder, this);
-    // sub_pad_order_tb3g = nh_.subscribe("/tb3g/pad_order", 1, &ServiceCore::cbReceivePadOrder, this);
-    // sub_pad_order_tb3r = nh_.subscribe("/tb3r/pad_order", 1, &ServiceCore::cbReceivePadOrder, this);
-    //
-    // sub_arrival_status_tb3p = nh_.subscribe("/tb3p/move_base/result", 1, &ServiceCore::cbCheckArrivalStatusTB3P, this);
-    // sub_arrival_status_tb3g = nh_.subscribe("/tb3g/move_base/result", 1, &ServiceCore::cbCheckArrivalStatusTB3G, this);
-    // sub_arrival_status_tb3r = nh_.subscribe("/tb3r/move_base/result", 1, &ServiceCore::cbCheckArrivalStatusTB3R, this);
+    // Publish Init State Level Crossing
+    // pbInitStateLevelCrossing();
 
-    ros::Rate loop_rate(5);
+    // Publish Test State Level Crossing
+    pbTestStateLevelCrossing();
 
+    // Loop
     while (ros::ok())
     {
+      // pbInitStateLevelCrossing();
       // fnPubServiceStatus();
 
       // fnPubPose();
@@ -75,6 +54,13 @@ public:
     }
     // is_pose_initialized = fnSetInitialPose();
   }
+
+  // Callback Functions
+  void cbReceiveSensorStateLevelCrossing(const rbiz_autorace_msgs::SensorStateLevelCrossing msgSensorStateLevelCrossing)
+  {
+    ROS_INFO("%d", msgSensorStateLevelCrossing.sensor_distance[0]);
+  }
+
   //
   // void fnInitParam()
   // {
@@ -174,27 +160,58 @@ public:
   //   poseStampedCounter[2].pose.orientation.w = target_pose_orientation[3];
   // }
 
-  // void fnPublishVoiceFilePath(int robot_num, const char* file_path)
-  // {
-  //   std_msgs::String str;
-  //
-  //   str.data = file_path;
-  //
-  //   if (robot_num == ROBOT_NUMBER_TB3P)
-  //   {
-  //     pub_play_sound_tb3p.publish(str);
-  //   }
-  //   else if (robot_num == ROBOT_NUMBER_TB3G)
-  //   {
-  //     pub_play_sound_tb3g.publish(str);
-  //   }
-  //   else if (robot_num == ROBOT_NUMBER_TB3R)
-  //   {
-  //     pub_play_sound_tb3r.publish(str);
-  //   }
-  //
-  //   // ROS_INFO("%d", robot_num);
-  // }
+  // Publish Functions
+  void pbInitStateLevelCrossing()
+  {
+    msgDoInitStateLevelCrossing.doIt = true;
+
+    pubInitStateLevelCrossing.publish(msgDoInitStateLevelCrossing);
+    //
+    // std_msgs::String str;
+    //
+    // str.data = file_path;
+    //
+    // if (robot_num == ROBOT_NUMBER_TB3P)
+    // {
+    //   pub_play_sound_tb3p.publish(str);
+    // }
+    // else if (robot_num == ROBOT_NUMBER_TB3G)
+    // {
+    //   pub_play_sound_tb3g.publish(str);
+    // }
+    // else if (robot_num == ROBOT_NUMBER_TB3R)
+    // {
+    //   pub_play_sound_tb3r.publish(str);
+    // }
+
+    // ROS_INFO("%d", robot_num);
+  }
+
+  void pbTestStateLevelCrossing()
+  {
+    msgDoTestStateLevelCrossing.doIt = true;
+
+    pubTestStateLevelCrossing.publish(msgDoTestStateLevelCrossing);
+    //
+    // std_msgs::String str;
+    //
+    // str.data = file_path;
+    //
+    // if (robot_num == ROBOT_NUMBER_TB3P)
+    // {
+    //   pub_play_sound_tb3p.publish(str);
+    // }
+    // else if (robot_num == ROBOT_NUMBER_TB3G)
+    // {
+    //   pub_play_sound_tb3g.publish(str);
+    // }
+    // else if (robot_num == ROBOT_NUMBER_TB3R)
+    // {
+    //   pub_play_sound_tb3r.publish(str);
+    // }
+
+    // ROS_INFO("%d", robot_num);
+  }
 
   //
   // void fnPublishGoalPoseTB3G()
@@ -742,49 +759,53 @@ private:
   ros::NodeHandle nh_;
 
   // Publisher
-  ros::Publisher pubServiceStatusPadtb3p;
-  ros::Publisher pubServiceStatusPadtb3g;
-  ros::Publisher pubServiceStatusPadtb3r;
-  ros::Publisher pub_is_item_available;
-
-  ros::Publisher pub_play_sound_tb3p;
-  ros::Publisher pub_play_sound_tb3g;
-  ros::Publisher pub_play_sound_tb3r;
-
-  ros::Publisher pubPoseStampedTb3p;
-  ros::Publisher pubPoseStampedTb3g;
-  ros::Publisher pubPoseStampedTb3r;
+  ros::Publisher pubInitStateLevelCrossing;
+  ros::Publisher pubTestStateLevelCrossing;
+  // ros::Publisher pubServiceStatusPadtb3p;
+  // ros::Publisher pubServiceStatusPadtb3g;
+  // ros::Publisher pubServiceStatusPadtb3r;
+  // ros::Publisher pub_is_item_available;
+  //
+  // ros::Publisher pub_play_sound_tb3p;
+  // ros::Publisher pub_play_sound_tb3g;
+  // ros::Publisher pub_play_sound_tb3r;
+  //
+  // ros::Publisher pubPoseStampedTb3p;
+  // ros::Publisher pubPoseStampedTb3g;
+  // ros::Publisher pubPoseStampedTb3r;
 
   // Subscriber
-  ros::Subscriber sub_pad_order_tb3g;
-  ros::Subscriber sub_pad_order_tb3r;
-  ros::Subscriber sub_pad_order_tb3p;
+  ros::Subscriber subSensorStateLevelCrossing;
+  // ros::Subscriber sub_pad_order_tb3r;
+  // ros::Subscriber sub_pad_order_tb3p;
 
-  ros::Subscriber sub_arrival_status_tb3p;
-  ros::Subscriber sub_arrival_status_tb3g;
-  ros::Subscriber sub_arrival_status_tb3r;
+  // ros::Subscriber sub_arrival_status_tb3p;
+  // ros::Subscriber sub_arrival_status_tb3g;
+  // ros::Subscriber sub_arrival_status_tb3r;
 
-  // msgs
+  // Messages
+  rbiz_autorace_msgs::DoIt msgDoInitStateLevelCrossing;
+  rbiz_autorace_msgs::DoIt msgDoTestStateLevelCrossing;
   // geometry_msgs::PoseStamped poseStampedTable[3];
   // geometry_msgs::PoseStamped poseStampedCounter[3];
 
-  std::vector<double> target_pose_position;
-  std::vector<double> target_pose_orientation;
-
-  boost::array<int, 3> item_num_chosen_by_pad = { {-1, -1, -1} };
-  boost::array<int, 3> is_item_available = { {1, 1, 1} };
-  boost::array<int, 3> robot_service_sequence = { {0, 0, 0} };
-
-  bool is_robot_reached_target[3] = {true, true, true};
+  // std::vector<double> target_pose_position;
+  // std::vector<double> target_pose_orientation;
+  //
+  // boost::array<int, 3> item_num_chosen_by_pad = { {-1, -1, -1} };
+  // boost::array<int, 3> is_item_available = { {1, 1, 1} };
+  // boost::array<int, 3> robot_service_sequence = { {0, 0, 0} };
+  //
+  // bool is_robot_reached_target[3] = {true, true, true};
 };
 
 int main(int argc, char **argv)
 {
   //Initiate ROS
-  ros::init(argc, argv, "traffic_light_monitor");
+  ros::init(argc, argv, "monitor_level_crossing");
 
   //Create an object of class ServiceCore that will take care of everything
-  TrafficLightMonitor trafficLightMonitor;
+  MonitorLevelCrossing monitorLevelCrossing;
 
   ros::spin();
 

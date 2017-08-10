@@ -15,298 +15,329 @@
   | |              |         |            |         |            |         |
 =======------------===========------------===========------------===========
 
- created 1 October 2017
- by ROBOTIS CO,.LTD.
+created 1 October 2017
+by ROBOTIS CO,.LTD.
 
- author : Leon Ryuwoon Jung
- */
+author : Leon Ryuwoon Jung
+*/
 
-#include <OLLO.h>
-#include <DynamixelSDK.h>
+#include "level_crossing.h"
 
-// Control table address
-#define ADDR_PRO_TORQUE_ENABLE          64                 // Control table address is different in Dynamixel model
-#define ADDR_PRO_GOAL_POSITION          116
-#define ADDR_PRO_PRESENT_POSITION       132
+/*******************************************************************************
+* Subscriber
+*******************************************************************************/
+ros::Subscriber<rbiz_autorace_msgs::DoIt> subInitStateLevelCrossing("init_state/level_crossing",cbInitStateLevelCrossing);
+ros::Subscriber<rbiz_autorace_msgs::DoIt> subTestStateLevelCrossing("test_state/level_crossing",cbTestStateLevelCrossing);
 
-// Protocol version
-#define PROTOCOL_VERSION                2.0                 // See which protocol version is used in the Dynamixel
+/*******************************************************************************
+* Publisher
+*******************************************************************************/
+// Bumpers, cliffs, buttons, encoders, battery of Turtlebot3
+// turtlebot3_msgs::SensorState msgSensorStateLevelCrossing;
+// ros::Publisher sensor_state_pub("sensor_state", &msgSensorStateLevelCrossing);
 
-// Default setting
-#define DXL_ID                          1                   // Dynamixel ID: 1
-#define BAUDRATE                        57600
-#define DEVICENAME                      "1"                 // Check which port is being used on your controller
-                                                            // ex) Serial1: "1"   Serial2: "2"   Serial3: "3"
+// std_msgs::Int32 msgSensorStateLevelCrossing;
+rbiz_autorace_msgs::SensorStateLevelCrossing msgSensorStateLevelCrossing;
+ros::Publisher pubSensorState("sensor_state/level_crossing", &msgSensorStateLevelCrossing);
 
-#define TORQUE_ENABLE                   1                   // Value for enabling the torque
-#define TORQUE_DISABLE                  0                   // Value for disabling the torque
-#define DXL_POSITION_VALUE_CLOSED       3072              // Dynamixel will rotate between this value
-#define DXL_POSITION_VALUE_OPENED       2048              // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
-#define DXL_MOVING_STATUS_THRESHOLD     20                  // Dynamixel moving status threshold
-
-
-dynamixel::PortHandler *portHandler_;
-dynamixel::PacketHandler *packetHandler_;
-uint32_t baudrate_;
-float  protocol_version_;
-
-int32_t dxl_present_position = 0;                           // Present position
-
-OLLO myOLLO;
-
-enum State { WAITING_FOR_ENTER, ENTERED, MUST_STOP, IS_STOPPED } state;
-enum Level { DXL_CLOSED, DXL_OPENED };
-
-double stopwatch_start_time_ = 0.0;
-bool is_started[3] = { false, false, false };
-bool is_able_to_pass_ = true;
-
-
-bool fnSetDXLTorque(uint8_t id, bool onoff)
-{
-  uint8_t dxl_error = 0;
-  int dxl_comm_result = COMM_TX_FAIL;
-
-  dxl_comm_result = packetHandler_->write1ByteTxRx(portHandler_, id, ADDR_PRO_TORQUE_ENABLE, onoff, &dxl_error);
-  if(dxl_comm_result != COMM_SUCCESS)
-  {
-    packetHandler_->printTxRxResult(dxl_comm_result);
-  }
-  else if(dxl_error != 0)
-  {
-    packetHandler_->printRxPacketError(dxl_error);
-  }
-}
-
-bool fnInitDXL(void)
-{
-  portHandler_   = dynamixel::PortHandler::getPortHandler(DEVICENAME);
-  packetHandler_ = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
-
-  // Open port
-  if (portHandler_->openPort())
-  {
-    Serial.print("Port is Opened");
-  }
-  else
-  {
-    return false;
-  }
-
-  // Set port baudrate
-  if (portHandler_->setBaudRate(baudrate_))
-  {
-    Serial.print("Baudrate is set");
-  }
-  else
-  {
-    return false;
-  }
-
-  // Enable Dynamixel Torque
-  fnSetDXLTorque(DXL_ID, true);
-
-  return true;
-}
-
-void fnCloseDXL(void)
-{
-  // Disable Dynamixel Torque
-  fnSetDXLTorque(DXL_ID, false);
-
-
-  // Close port
-  portHandler_->closePort();
-}
-
-void fnWriteDXL(Level level_status)
-{
-  uint8_t dxl_error = 0;
-  int dxl_comm_result = COMM_TX_FAIL;
-
-  if (level_status == DXL_CLOSED)
-  {
-    // Write goal position to DXL_CLOSED level status
-    dxl_comm_result = packetHandler_->write4ByteTxRx(portHandler_, DXL_ID, ADDR_PRO_GOAL_POSITION, DXL_POSITION_VALUE_CLOSED, &dxl_error);
-  }
-  else
-  {
-    // Write goal position to DXL_OPENED level status
-    dxl_comm_result = packetHandler_->write4ByteTxRx(portHandler_, DXL_ID, ADDR_PRO_GOAL_POSITION, DXL_POSITION_VALUE_OPENED, &dxl_error);
-  }
-
-  if (dxl_comm_result != COMM_SUCCESS)
-  {
-    Serial.print(packetHandler_->getTxRxResult(dxl_comm_result));
-  }
-  else if (dxl_error != 0)
-  {
-    Serial.print(packetHandler_->getRxPacketError(dxl_error));
-  }
-}
-
+/*******************************************************************************
+* Setup function
+*******************************************************************************/
 void setup()
 {
-  myOLLO.begin(1);//DMS Module must be connected at port 1.
-  myOLLO.begin(2);//DMS Module must be connected at port 2.
-  myOLLO.begin(3);//DMS Module must be connected at port 3.
+  // Initialize ROS node handle, advertise and subscribe the topics
+  nh.initNode();
+  nh.getHardware()->setBaud(115200);
+  nh.subscribe(subInitStateLevelCrossing);
+  nh.subscribe(subTestStateLevelCrossing);
+  nh.advertise(pubSensorState);
 
-  state = WAITING_FOR_ENTER;
+  nh.loginfo("Connected to OpenCR board!");
 
-  ///////////////////////////////
-  /// Dynamixel
-  ///////////////////////////////
-  baudrate_ = BAUDRATE;
-  protocol_version_ = PROTOCOL_VERSION;
+  // Settings for OLLO DMS
+  ollo.begin(1);  //DMS Module must be connected at port 1.
+  ollo.begin(2);  //DMS Module must be connected at port 2.
+  ollo.begin(3);  //DMS Module must be connected at port 3.
 
-  fnInitDXL();
+  // Setting for Dynamixel motors
+  motorDriver.init();
 
-  fnWriteDXL(DXL_OPENED);
+  // Init Paramters
+  fnInitStateLevelCrossing();
 }
 
-void loop(){
-  int sensor1_distance = myOLLO.read(1);
-  int sensor2_distance = myOLLO.read(2);
-  int sensor3_distance = myOLLO.read(3);
+/*******************************************************************************
+* Loop function
+*******************************************************************************/
+void loop()
+{
+  fnReceiveSensorDistance();
 
-  if (sensor1_distance > 650 && state == WAITING_FOR_ENTER)
-  {
-    state = ENTERED;
-  }
-  else if (sensor2_distance > 650 && state == ENTERED)
-  {
-    state = MUST_STOP;
-  }
-  else if (sensor3_distance > 650 && state == MUST_STOP)
-  {
-    state = IS_STOPPED;
-  }
-
-  Serial.print("DMS Sensor 1 ADC Value = ");
-  Serial.println(sensor1_distance); //read ADC value from OLLO port 1
-
-  Serial.print("DMS Sensor 2 ADC Value = ");
-  Serial.println(sensor2_distance); //read ADC value from OLLO port 2
-//  delay(60);
-  Serial.print("DMS Sensor 3 ADC Value = ");
-  Serial.println(sensor3_distance); //read ADC value from OLLO port 3
-// //  delay(60);
-
-  Serial.print("State : ");
-  Serial.println(state);
+  fnCheckVehicleStatus();
 
   fnLevelControl();
 
-  delay(120);
+  fnControlLevelPose();
+
+  pbSensorState();
+
+  nh.spinOnce();
+}
+
+/*******************************************************************************
+* Publish msgs (Sensor data: Power, etc.)
+*******************************************************************************/
+void pbSensorState()
+{
+  msgSensorStateLevelCrossing.stamp = nh.now();
+  msgSensorStateLevelCrossing.elapsed_time = fnGetTimeSinceStart();
+  msgSensorStateLevelCrossing.sensor_distance[0] = sensor_distance[0];
+  msgSensorStateLevelCrossing.sensor_distance[1] = sensor_distance[1];
+  msgSensorStateLevelCrossing.sensor_distance[2] = sensor_distance[2];
+  msgSensorStateLevelCrossing.is_started[0] = is_started[0];
+  msgSensorStateLevelCrossing.is_started[1] = is_started[1];
+  msgSensorStateLevelCrossing.is_started[2] = is_started[2];
+  msgSensorStateLevelCrossing.is_able_to_pass = is_able_to_pass_;
+  msgSensorStateLevelCrossing.vehicle_state = vehicle_state_;
+  msgSensorStateLevelCrossing.level_status = level_status_;
+  msgSensorStateLevelCrossing.battery = fncheckVoltage();
+
+  pubSensorState.publish(&msgSensorStateLevelCrossing);
+}
+
+/*******************************************************************************
+* Callback function
+*******************************************************************************/
+
+void cbInitStateLevelCrossing(const rbiz_autorace_msgs::DoIt& msgInitStateLevelCrossing)
+{
+  if (msgInitStateLevelCrossing.doIt == true)
+  {
+    fnInitStateLevelCrossing();
+  }
+}
+
+void cbTestStateLevelCrossing(const rbiz_autorace_msgs::DoIt& msgTestStateLevelCrossing)
+{
+  if (msgTestStateLevelCrossing.doIt == true)
+  {
+    fnTestStateLevelCrossing();
+  }
+}
+
+/*******************************************************************************
+* Normal function
+*******************************************************************************/
+
+void fnInitStateLevelCrossing()
+{
+  fnSetStopWatch();
+
+  sensor_distance[0] = 0;
+  sensor_distance[1] = 0;
+  sensor_distance[2] = 0;
+
+  is_started[0] = false;
+  is_started[1] = false;
+  is_started[2] = false;
+
+  is_able_to_pass_ = true;
+  vehicle_state_ = WAITING_FOR_ENTER;
+  level_status_ = LEVEL_OPENED;
+  mode_ = ACTIVE_MODE;
+    // mode_ = TEST_MODE;
+}
+
+void fnTestStateLevelCrossing()
+{
+  fnInitStateLevelCrossing();
+  mode_ = TEST_MODE;
+}
+
+void fnReceiveSensorDistance()
+{
+  sensor_distance[0] = ollo.read(1);
+  sensor_distance[1] = ollo.read(2);
+  sensor_distance[2] = ollo.read(3);
+
+  // Serial.print("DMS Sensor 1 ADC Value = ");
+  // Serial.println(sensor_distance[0]); //read ADC value from OLLO port 1
+  //
+  // Serial.print("DMS Sensor 2 ADC Value = ");
+  // Serial.println(sensor_distance[1]); //read ADC value from OLLO port 2
+  //
+  // Serial.print("DMS Sensor 3 ADC Value = ");
+  // Serial.println(sensor_distance[2]); //read ADC value from OLLO port 3
+
+  delay(100);
+}
+
+void fnCheckVehicleStatus()
+{
+  if (sensor_distance[0] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == WAITING_FOR_ENTER)
+  {
+    vehicle_state_ = ENTERED;
+  }
+  else if (sensor_distance[1] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == ENTERED)
+  {
+    vehicle_state_ = MUST_STOP;
+  }
+  else if (sensor_distance[2] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == MUST_STOP)
+  {
+    vehicle_state_ = PASSED;
+  }
+
+  // Serial.print("State : ");
+  // Serial.println(vehicle_state_);
 }
 
 void fnLevelControl()
 {
-  if (state == ENTERED)
+  if (mode_ == ACTIVE_MODE)
   {
-    if (is_started[0] == false)
+    if (vehicle_state_ == ENTERED)
     {
-      //start stopwatch
-      fnSetStopWatch();
-      is_started[0] = true;
-    }
-    else
-    {
-      is_able_to_pass_ = false;
-      //
-      // if (fnGetTimeSinceStart() > 0.0 && fnGetTimeSinceStart() <= 3000.0)
-      // {
-        fnWriteDXL(DXL_CLOSED);
-      // }
-      // else if (fnGetTimeSinceStart() > 3000.0 && fnGetTimeSinceStart() <= 8000.0)
-      // {
-      //   fnWriteDXL(DXL_CLOSED);
-      //   // is_able_to_pass_ = false;
-      //   // is_started[1] = false;
-      // }
-      // else if (fnGetTimeSinceStart() > 8000.0)
-      // {
-      //   fnWriteDXL(LED_GREEN);
-      //   // is_able_to_pass_ = true;
-      //   // is_started[1] = false;
-      // }
-    }
-    // digitalWrite(3, HIGH);
-    // digitalWrite(5, LOW);
-    // digitalWrite(6, LOW);
-  }
-  else if (state == MUST_STOP)
-  {
-    if (is_able_to_pass_ == false)
-    {
-      // fnWriteDXL(DXL_CLOSED);
+      if (is_started[0] == false)
+      {
+        //start stopwatch
+        fnSetStopWatch();
+        is_started[0] = true;
+      }
+      else
+      {
+        is_able_to_pass_ = false;
 
-      // if (is_started[1] == false)
+        level_status_ = LEVEL_CLOSED;
+
+
+        // }
+        // else if (fnGetTimeSinceStart() > 3000.0 && fnGetTimeSinceStart() <= 8000.0)
+        // {
+        //   level_status_ = LEVEL_CLOSED;
+        //   // is_able_to_pass_ = false;
+        //   // is_started[1] = false;
+        // }
+        // else if (fnGetTimeSinceStart() > 8000.0)
+        // {
+        //   level_status_ = LED_GREEN);
+        //  // is_able_to_pass_ = true;
+        //   // is_started[1] = false;
+        // }
+      }
+    }
+    else if (vehicle_state_ == MUST_STOP)
+    {
+      // if (is_able_to_pass_ == false)
       // {
-      //   //start stopwatch
-      //   fnSetStopWatch();
-      //   is_started[1] = true;
-      // }
-      // else
-      // {
-        if (fnGetTimeSinceStart() > 5000.0)
+        // level_status_ = LEVEL_CLOSED;
+
+        if (is_started[1] == false)
         {
-          fnWriteDXL(DXL_OPENED);
-          is_able_to_pass_ = true;
-          // is_started[1] = false;
+          //start stopwatch
+          fnSetStopWatch();
+          is_started[1] = true;
         }
         else
         {
-          fnWriteDXL(DXL_CLOSED);
-          is_able_to_pass_ = false;
-          // is_started[1] = false;
+          if (fnGetTimeSinceStart() > 5000.0)
+          {
+            level_status_ = LEVEL_OPENED;
+
+
+            is_able_to_pass_ = true;
+            // is_started[1] = false;
+          }
+          else
+          {
+            level_status_ = LEVEL_CLOSED;
+
+
+            is_able_to_pass_ = false;
+            // is_started[1] = false;
+          }
         }
       // }
-    }
-    else
-    {
-      // if (fnGetTimeSinceStart() > 50000.0)
+      // else
       // {
-        fnWriteDXL(DXL_OPENED);
-        // is_able_to_pass_ = true;
-        // is_started[1] = false;
+      //   // if (fnGetTimeSinceStart() > 50000.0)
+      //   // {
+      //     level_status_ = LEVEL_OPENED;
+      //     // is_able_to_pass_ = true;
+      //     // is_started[1] = false;
+      //   // }
       // }
     }
+    else if (vehicle_state_ == PASSED)
+    {
+      if (is_started[2] == false)
+      {
+        fnSetStopWatch();
+        is_started[2] = true;
+      }
+      else
+      {
+        if (is_able_to_pass_ == false)
+        {
+          level_status_ = LEVEL_CLOSED;
 
-    // digitalWrite(3, LOW);
-    // digitalWrite(5, HIGH);
-    // digitalWrite(6, LOW);
 
+          // level_status_ = ALL);
+          // fnSetStopWatch);
+          // is_started[2] = true;
+        }
+        else
+        {
+          level_status_ = LEVEL_OPENED;
+
+
+          // if (fnGetTimeSinceStart() > 50000.0)
+          // {
+            // level_status_ = LED_GREEN);
+            //is_able_to_pass_ = true;
+            // is_started[1] = false;
+          // }
+        }
+      }
+
+      // is_able_to_pass_ = false;
+    }
   }
-  else if (state == IS_STOPPED)
+  else if (mode_ == TEST_MODE)
   {
-    if (is_able_to_pass_ == false)
+    if (vehicle_state_ == ENTERED)
     {
-      fnWriteDXL(DXL_CLOSED);
-      // fnWriteDXL(ALL);
-      // fnSetStopWatch();
-      // is_started[1] = true;
+      level_status_ = LEVEL_CLOSED;
     }
-    else
+    else if (vehicle_state_ == MUST_STOP)
     {
-      fnWriteDXL(DXL_OPENED);
-      // if (fnGetTimeSinceStart() > 50000.0)
-      // {
-        // fnWriteDXL(LED_GREEN);
-        // is_able_to_pass_ = true;
-        // is_started[1] = false;
-      // }
+      level_status_ = LEVEL_MIDDLE;
     }
+    else if (vehicle_state_ == PASSED)
+    {
+      level_status_ = LEVEL_OPENED;
 
-    // is_able_to_pass_ = false;
-    // digitalWrite(3, LOW);
-    // digitalWrite(5, LOW);
-    // digitalWrite(6, HIGH);
-    // fnWriteDXL(LED_GREEN);
+      fnInitStateLevelCrossing();
+    }
   }
 
-  Serial.print(fnGetTimeSinceStart());
-  Serial.println(" ");
+  // Serial.print(fnGetTimeSinceStart());
+  // Serial.println(" ");
+}
+
+void fnControlLevelPose()
+{
+  if (level_status_ == LEVEL_OPENED)
+  {
+    motorDriver.controlPosition(DXL_ID, DXL_POSITION_VALUE_OPENED);
+  }
+  else if (level_status_ == LEVEL_CLOSED)
+  {
+    motorDriver.controlPosition(DXL_ID, DXL_POSITION_VALUE_CLOSED);
+  }
+  else if (level_status_ == LEVEL_MIDDLE)
+  {
+    motorDriver.controlPosition(DXL_ID, DXL_POSITION_VALUE_MIDDLE);
+  }
 }
 
 double fnGetCurrentTime()
@@ -328,4 +359,16 @@ double fnGetTimeSinceStart()
 void fnSetStopWatch()
 {
   stopwatch_start_time_ = fnGetCurrentTime();
+}
+
+/*******************************************************************************
+* Check voltage
+*******************************************************************************/
+float fncheckVoltage()
+{
+  float vol_value;
+
+  vol_value = getPowerInVoltage();
+
+  return vol_value;
 }

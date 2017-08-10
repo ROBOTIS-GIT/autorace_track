@@ -1,7 +1,0 @@
-uint8 do_initializing
-
----
-
-uint8 is_initialized
-uint8 TRUE=1
-uint8 FALSE=0

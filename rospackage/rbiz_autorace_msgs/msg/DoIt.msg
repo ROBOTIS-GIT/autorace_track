@@ -1,15 +1,9 @@
 ########################################
 # CONSTANTS
 ########################################
-# IR Sensor that checks where the car is currently going
-uint8 CAR_ENTERED  = 1
-uint8 CAR_MUST_STOP = 2
-uint8 CAR_PASSED   = 4
-
+uint8 DO_IT_VALUE = 0
 
 ########################################
 # Messages
 ########################################
-time stamp
-uint8  traffic_light_state
-float32  battery
+uint8 doIt
