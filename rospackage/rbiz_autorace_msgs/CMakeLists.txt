@@ -21,13 +21,14 @@ add_message_files(
   FILES
   SensorStateLevelCrossing.msg
   SensorStateTrafficLight.msg
+  SensorStateStopwatch.msg
   DoIt.msg
 )
 
-add_service_files(
-  DIRECTORY srv
-  FILES
-)
+#add_service_files(
+#  DIRECTORY srv
+#  FILES
+#)
 
 
 generate_messages(

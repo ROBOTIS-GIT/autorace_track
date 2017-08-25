@@ -3,7 +3,7 @@
 #include <ros.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int32.h>
-#include <rbiz_autorace_msgs/SensorStateTrafficLight.h>
+#include <rbiz_autorace_msgs/SensorStateStopwatch.h>
 #include <rbiz_autorace_msgs/DoIt.h>
 
 /*******************************************************************************
@@ -31,16 +31,17 @@ OLLO ollo;
 static uint16_t sensor_distance[3];// = {SENSOR_DISTANCE_INIT_VALUE, SENSOR_DISTANCE_INIT_VALUE, SENSOR_DISTANCE_INIT_VALUE};
 
 double stopwatch_start_time_;
+double lap_time;
 bool is_started[3];
-bool is_able_to_pass_;
+bool is_finished;
 
-uint8_t led_turn_ = 1;
+// uint8_t led_turn_ = 1;
 
 /*******************************************************************************
 * Enum
 *******************************************************************************/
-static enum State { WAITING_FOR_ENTER, ENTERED, MUST_STOP, PASSED } vehicle_state_;
-static enum Color { LED_RED, LED_YELLOW, LED_GREEN, LED_ALL_LOW } led_color_;
+static enum State { WAITING_FOR_START, STARTED, IS_GOING_TOWARD_RIGHT_DIRECTION, IS_ABOUT_TO_FINISH, FINISHED } vehicle_state_;
+// static enum Color { LED_RED, LED_YELLOW, LED_GREEN, LED_ALL_LOW } led_color_;
 static enum Mode  { ACTIVE_MODE, TEST_MODE } mode_;
 
 /*******************************************************************************
@@ -49,14 +50,15 @@ static enum Mode  { ACTIVE_MODE, TEST_MODE } mode_;
 void fnGetButtonPressed();
 void fnReceiveSensorDistance();
 void fnCheckVehicleStatus();
-void fnLevelControl();
-void fnInitStateTrafficLight();
-void fnTestStateTrafficLight();
+void fnStopwatchControl();
+void fnInitStateStopwatch();
+void fnTestStateStopwatch();
 
 
 double fnGetCurrentTime();
 double fnGetTimeSinceStart();
 void fnSetStopWatch();
+void fnGetLapTime();
 
 float fncheckVoltage();
 
@@ -66,7 +68,7 @@ float fncheckVoltage();
 void pbSensorState();
 
 /*******************************************************************************
-* Callback function for InitStateTrafficLight msg
+* Callback function for InitStateStopwatch msg
 *******************************************************************************/
-void cbInitStateTrafficLight(const rbiz_autorace_msgs::DoIt& msgDoInitStateTrafficLight);
-void cbTestStateTrafficLight(const rbiz_autorace_msgs::DoIt& msgTestStateTrafficLight);
+void cbInitStateStopwatch(const rbiz_autorace_msgs::DoIt& msgDoInitStateStopwatch);
+void cbTestStateStopwatch(const rbiz_autorace_msgs::DoIt& msgTestStateStopwatch);

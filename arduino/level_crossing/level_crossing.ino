@@ -55,6 +55,9 @@ void setup()
   ollo.begin(2);  //DMS Module must be connected at port 2.
   ollo.begin(3);  //DMS Module must be connected at port 3.
 
+  // Settings for OLLO TS-10
+  ollo.begin(4, TOUCH_SENSOR);
+
   // Setting for Dynamixel motors
   motorDriver.init();
 
@@ -67,6 +70,8 @@ void setup()
 *******************************************************************************/
 void loop()
 {
+  fnGetButtonPressed();
+
   fnReceiveSensorDistance();
 
   fnCheckVehicleStatus();
@@ -124,6 +129,14 @@ void cbTestStateLevelCrossing(const rbiz_autorace_msgs::DoIt& msgTestStateLevelC
 /*******************************************************************************
 * Normal function
 *******************************************************************************/
+
+void fnGetButtonPressed()
+{
+  if (ollo.read(4, TOUCH_SENSOR))
+  {
+    fnInitStateLevelCrossing();
+  }
+}
 
 void fnInitStateLevelCrossing()
 {

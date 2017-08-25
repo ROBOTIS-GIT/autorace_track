@@ -1,4 +1,4 @@
-/* RBiz Challenge TurtleBot3 Auto Race - Traffic Light
+/* RBiz Challenge TurtleBot3 Auto Race - Stopwatch
 
 |-----|
 ||---||
@@ -24,20 +24,20 @@
  author : Leon Ryuwoon Jung
  */
 
-#include "traffic_light.h"
+#include "stopwatch.h"
 
 /*******************************************************************************
 * Subscriber
 *******************************************************************************/
-ros::Subscriber<rbiz_autorace_msgs::DoIt> subInitStateTrafficLight("init_state/traffic_light",cbInitStateTrafficLight);
-ros::Subscriber<rbiz_autorace_msgs::DoIt> subTestStateTrafficLight("test_state/traffic_light",cbTestStateTrafficLight);
+ros::Subscriber<rbiz_autorace_msgs::DoIt> subInitStateStopwatch("init_state/stopwatch",cbInitStateStopwatch);
+ros::Subscriber<rbiz_autorace_msgs::DoIt> subTestStateStopwatch("test_state/stopwatch",cbTestStateStopwatch);
 
 /*******************************************************************************
 * Publisher
 *******************************************************************************/
 // DMS, battery, etc.
-rbiz_autorace_msgs::SensorStateTrafficLight msgSensorStateTrafficLight;
-ros::Publisher pubSensorStateTrafficLight("sensor_state/traffic_light", &msgSensorStateTrafficLight);
+rbiz_autorace_msgs::SensorStateStopwatch msgSensorStateStopwatch;
+ros::Publisher pubSensorStateStopwatch("sensor_state/stopwatch", &msgSensorStateStopwatch);
 
 /*******************************************************************************
 * Setup function
@@ -47,9 +47,9 @@ void setup()
   // Initialize ROS node handle, advertise and subscribe the topics
   nh.initNode();
   nh.getHardware()->setBaud(115200);
-  nh.subscribe(subInitStateTrafficLight);
-  nh.subscribe(subTestStateTrafficLight);
-  nh.advertise(pubSensorStateTrafficLight);
+  nh.subscribe(subInitStateStopwatch);
+  nh.subscribe(subTestStateStopwatch);
+  nh.advertise(pubSensorStateStopwatch);
 
   nh.loginfo("Connected to OpenCR board!");
 
@@ -67,23 +67,23 @@ void setup()
   pinMode(11, OUTPUT);
 
   // Init Paramters
-  fnInitStateTrafficLight();
+  fnInitStateStopwatch();
 }
 
 /*******************************************************************************
 * Loop function
 *******************************************************************************/
 void loop()
-{  
+{
   fnGetButtonPressed();
 
   fnReceiveSensorDistance();
 
   fnCheckVehicleStatus();
 
-  fnLEDControl();
+  fnStopwatchControl();
 
-  fnControlLED();
+  fnGetLapTime();
 
   pbSensorState();
 
@@ -95,39 +95,40 @@ void loop()
 *******************************************************************************/
 void pbSensorState()
 {
-  msgSensorStateTrafficLight.stamp = nh.now();
-  msgSensorStateTrafficLight.elapsed_time = fnGetTimeSinceStart();
-  msgSensorStateTrafficLight.sensor_distance[0] = sensor_distance[0];
-  msgSensorStateTrafficLight.sensor_distance[1] = sensor_distance[1];
-  msgSensorStateTrafficLight.sensor_distance[2] = sensor_distance[2];
-  msgSensorStateTrafficLight.is_started[0] = is_started[0];
-  msgSensorStateTrafficLight.is_started[1] = is_started[1];
-  msgSensorStateTrafficLight.is_started[2] = is_started[2];
-  msgSensorStateTrafficLight.is_able_to_pass = is_able_to_pass_;
-  msgSensorStateTrafficLight.vehicle_state = vehicle_state_;
-  msgSensorStateTrafficLight.led_color = led_color_;
-  msgSensorStateTrafficLight.battery = fncheckVoltage();
+  msgSensorStateStopwatch.stamp = nh.now();
+  msgSensorStateStopwatch.elapsed_time = fnGetTimeSinceStart();
+  msgSensorStateStopwatch.sensor_distance[0] = sensor_distance[0];
+  msgSensorStateStopwatch.sensor_distance[1] = sensor_distance[1];
+  msgSensorStateStopwatch.sensor_distance[2] = sensor_distance[2];
+  msgSensorStateStopwatch.is_started[0] = is_started[0];
+  msgSensorStateStopwatch.is_started[1] = is_started[1];
+  msgSensorStateStopwatch.is_started[2] = is_started[2];
+  msgSensorStateStopwatch.is_finished = is_finished;
+  msgSensorStateStopwatch.lap_time = lap_time;
+  msgSensorStateStopwatch.vehicle_state = vehicle_state_;
+  // msgSensorStateStopwatch.led_color = led_color_;
+  msgSensorStateStopwatch.battery = fncheckVoltage();
 
-  pubSensorStateTrafficLight.publish(&msgSensorStateTrafficLight);
+  pubSensorStateStopwatch.publish(&msgSensorStateStopwatch);
 }
 
 /*******************************************************************************
 * Callback function
 *******************************************************************************/
 
-void cbInitStateTrafficLight(const rbiz_autorace_msgs::DoIt& msgInitStateTrafficLight)
+void cbInitStateStopwatch(const rbiz_autorace_msgs::DoIt& msgInitStateStopwatch)
 {
-  if (msgInitStateTrafficLight.doIt == true)
+  if (msgInitStateStopwatch.doIt == true)
   {
-    fnInitStateTrafficLight();
+    fnInitStateStopwatch();
   }
 }
 
-void cbTestStateTrafficLight(const rbiz_autorace_msgs::DoIt& msgTestStateTrafficLight)
+void cbTestStateStopwatch(const rbiz_autorace_msgs::DoIt& msgTestStateStopwatch)
 {
-  if (msgTestStateTrafficLight.doIt == true)
+  if (msgTestStateStopwatch.doIt == true)
   {
-    fnTestStateTrafficLight();
+    fnTestStateStopwatch();
   }
 }
 
@@ -139,11 +140,11 @@ void fnGetButtonPressed()
 {
   if (ollo.read(4, TOUCH_SENSOR))
   {
-    fnInitStateTrafficLight();
+    fnInitStateStopwatch();
   }
 }
 
-void fnInitStateTrafficLight()
+void fnInitStateStopwatch()
 {
   fnSetStopWatch();
 
@@ -155,16 +156,16 @@ void fnInitStateTrafficLight()
   is_started[1] = false;
   is_started[2] = false;
 
-  is_able_to_pass_ = true;
-  vehicle_state_ = WAITING_FOR_ENTER;
-  led_color_ = LED_GREEN;
+  is_finished = false;
+  vehicle_state_ = WAITING_FOR_START;
+  // led_color_ = LED_GREEN;
   mode_ = ACTIVE_MODE;
     // mode_ = TEST_MODE;
 }
 
-void fnTestStateTrafficLight()
+void fnTestStateStopwatch()
 {
-  fnInitStateTrafficLight();
+  fnInitStateStopwatch();
   mode_ = TEST_MODE;
 }
 
@@ -188,28 +189,32 @@ void fnReceiveSensorDistance()
 
 void fnCheckVehicleStatus()
 {
-  if (sensor_distance[0] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == WAITING_FOR_ENTER)
+  if (sensor_distance[1] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == WAITING_FOR_START)
   {
-    vehicle_state_ = ENTERED;
+    vehicle_state_ = STARTED;
   }
-  else if (sensor_distance[1] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == ENTERED)
+  else if (sensor_distance[2] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == STARTED)
   {
-    vehicle_state_ = MUST_STOP;
+    vehicle_state_ = IS_GOING_TOWARD_RIGHT_DIRECTION;
   }
-  else if (sensor_distance[2] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == MUST_STOP)
+  else if (sensor_distance[0] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == IS_GOING_TOWARD_RIGHT_DIRECTION)
   {
-    vehicle_state_ = PASSED;
+    vehicle_state_ = IS_ABOUT_TO_FINISH;
+  }
+  else if (sensor_distance[1] > DISTANCE_THRESHOLD_PASS && vehicle_state_ == IS_ABOUT_TO_FINISH)
+  {
+    vehicle_state_ = FINISHED;
   }
 
   // Serial.print("State : ");
   // Serial.println(vehicle_state_);
 }
 
-void fnLEDControl()
+void fnStopwatchControl()
 {
   if (mode_ == ACTIVE_MODE)
   {
-    if (vehicle_state_ == ENTERED)
+    if (vehicle_state_ == STARTED)
     {
       if (is_started[0] == false)
       {
@@ -219,126 +224,173 @@ void fnLEDControl()
       }
       else
       {
-        if (fnGetTimeSinceStart() > 0.0 && fnGetTimeSinceStart() <= 3000.0)
-        {
-          led_color_ = LED_YELLOW;
-        }
-        else if (fnGetTimeSinceStart() > 3000.0)
-        {
-          led_color_ = LED_RED;
-          is_able_to_pass_ = false;
-        }
+        // if (fnGetTimeSinceStart() > 0.0 && fnGetTimeSinceStart() <= 3000.0)
+        // {
+        //   led_color_ = LED_YELLOW;
+        // }
+        // else if (fnGetTimeSinceStart() > 3000.0)
+        // {
+        //   led_color_ = LED_RED;
+        //   is_able_to_pass_ = false;
+        // }
       }
     }
-    else if (vehicle_state_ == MUST_STOP)
+    else if (vehicle_state_ == IS_GOING_TOWARD_RIGHT_DIRECTION)
     {
-      if (is_started[1] == false)
-      {
-        if (fnGetTimeSinceStart() <= 3000.0)
-        {
-          led_color_ = LED_YELLOW;
-        }
-        else
-        {
-          led_color_ = LED_RED;
-          is_able_to_pass_ = false;
-
-          fnSetStopWatch();
-          is_started[1] = true;
-        }
-      }
-      else
-      {
-        if (fnGetTimeSinceStart() <= 5000.0)
-        {
-          led_color_ = LED_RED;
-          is_able_to_pass_ = false;
-        }
-        else
-        {
-          led_color_ = LED_GREEN;
-          is_able_to_pass_ = true;
-        }
-      }
+      // if (is_started[1] == false)
+      // {
+      //   if (fnGetTimeSinceStart() <= 3000.0)
+      //   {
+      //     led_color_ = LED_YELLOW;
+      //   }
+      //   else
+      //   {
+      //     led_color_ = LED_RED;
+      //     is_able_to_pass_ = false;
+      //
+      //     fnSetStopWatch();
+      //     is_started[1] = true;
+      //   }
+      // }
+      // else
+      // {
+      //   if (fnGetTimeSinceStart() <= 5000.0)
+      //   {
+      //     led_color_ = LED_RED;
+      //     is_able_to_pass_ = false;
+      //   }
+      //   else
+      //   {
+      //     led_color_ = LED_GREEN;
+      //     is_able_to_pass_ = true;
+      //   }
+      // }
     }
-    else if (vehicle_state_ == PASSED)
+    else if (vehicle_state_ == IS_ABOUT_TO_FINISH)
     {
-      if (is_started[2] == false)
-      {
-        //start stopwatch
-        fnSetStopWatch();
-        is_started[2] = true;
-      }
-      else
-      {
-        if (led_turn_ == 1)
-        {
-          if (is_able_to_pass_ == false)
-          {
-            led_color_ = LED_YELLOW;
-          }
-          else
-          {
-            led_color_ = LED_GREEN;
-          }
-        }
-        else
-        {
-          led_color_ = LED_ALL_LOW;
-        }
-
-        led_turn_ = 1 - led_turn_;
-
-        delay(200);
-      }
+    //   if (is_started[2] == false)
+    //   {
+    //     //start stopwatch
+    //     fnSetStopWatch();
+    //     is_started[2] = true;
+    //   }
+    //   else
+    //   {
+    //     if (led_turn_ == 1)
+    //     {
+    //       if (is_able_to_pass_ == false)
+    //       {
+    //         led_color_ = LED_YELLOW;
+    //       }
+    //       else
+    //       {
+    //         led_color_ = LED_GREEN;
+    //       }
+    //     }
+    //     else
+    //     {
+    //       led_color_ = LED_ALL_LOW;
+    //     }
+    //
+    //     led_turn_ = 1 - led_turn_;
+    //
+    //     delay(200);
+    //   }
+    // }
     }
-  }
-  else if (mode_ == TEST_MODE)
-  {
-    if (vehicle_state_ == ENTERED)
+    else if (vehicle_state_ == FINISHED)
     {
-      led_color_ = LED_RED;
+      is_finished = true;
+    //   if (is_started[2] == false)
+    //   {
+    //     //start stopwatch
+    //     fnSetStopWatch();
+    //     is_started[2] = true;
+    //   }
+    //   else
+    //   {
+    //     if (led_turn_ == 1)
+    //     {
+    //       if (is_able_to_pass_ == false)
+    //       {
+    //         led_color_ = LED_YELLOW;
+    //       }
+    //       else
+    //       {
+    //         led_color_ = LED_GREEN;
+    //       }
+    //     }
+    //     else
+    //     {
+    //       led_color_ = LED_ALL_LOW;
+    //     }
+    //
+    //     led_turn_ = 1 - led_turn_;
+    //
+    //     delay(200);
+    //   }
+    // }
     }
-    else if (vehicle_state_ == MUST_STOP)
-    {
-      led_color_ = LED_YELLOW;
-    }
-    else if (vehicle_state_ == PASSED)
-    {
-      led_color_ = LED_GREEN;
-
-      fnInitStateTrafficLight();
-    }
+    // else if (mode_ == FINISHED)
+    // {
+    //
+    // // if (vehicle_state_ == ENTERED)
+    // // {
+    // //   led_color_ = LED_RED;
+    // // }
+    // // else if (vehicle_state_ == MUST_STOP)
+    // // {
+    // //   led_color_ = LED_YELLOW;
+    // // }
+    // // else if (vehicle_state_ == PASSED)
+    // // {
+    // //   led_color_ = LED_GREEN;
+    // //
+    // //   fnInitStateStopwatch();
+    // // }
+    // }
   }
 }
 
-void fnControlLED()
+void fnGetLapTime()
 {
-  if (led_color_ == LED_RED)
+  if (is_finished == true)
   {
-    digitalWrite(9, HIGH);
-    digitalWrite(10, LOW);
-    digitalWrite(11, LOW);
-  }
-  else if (led_color_ == LED_YELLOW)
-  {
-    digitalWrite(9, LOW);
-    digitalWrite(10, HIGH);
-    digitalWrite(11, LOW);
-  }
-  else if (led_color_ == LED_GREEN)
-  {
-    digitalWrite(9, LOW);
-    digitalWrite(10, LOW);
-    digitalWrite(11, HIGH);
+
   }
   else
   {
-    digitalWrite(9, LOW);
-    digitalWrite(10, LOW);
-    digitalWrite(11, LOW);
+    lap_time = fnGetTimeSinceStart();
   }
 }
+
+// void fnControlLED()
+// {
+//   if (led_color_ == LED_RED)
+//   {
+//     digitalWrite(9, HIGH);
+//     digitalWrite(10, LOW);
+//     digitalWrite(11, LOW);
+//   }
+//   else if (led_color_ == LED_YELLOW)
+//   {
+//     digitalWrite(9, LOW);
+//     digitalWrite(10, HIGH);
+//     digitalWrite(11, LOW);
+//   }
+//   else if (led_color_ == LED_GREEN)
+//   {
+//     digitalWrite(9, LOW);
+//     digitalWrite(10, LOW);
+//     digitalWrite(11, HIGH);
+//   }
+//   else
+//   {
+//     digitalWrite(9, LOW);
+//     digitalWrite(10, LOW);
+//     digitalWrite(11, LOW);
+//   }
+// }
 
 double fnGetCurrentTime()
 {

@@ -45,6 +45,7 @@ static enum Mode  { ACTIVE_MODE, TEST_MODE } mode_;
 /*******************************************************************************
 * Functions
 *******************************************************************************/
+void fnGetButtonPressed();
 void fnReceiveSensorDistance();
 void fnCheckVehicleStatus();
 void fnLevelControl();
