@@ -158,6 +158,7 @@ void fnInitStateStopwatch()
 
   is_finished = false;
   vehicle_state_ = WAITING_FOR_START;
+  // lap_time = fnGetLapTime();
   // led_color_ = LED_GREEN;
   mode_ = ACTIVE_MODE;
     // mode_ = TEST_MODE;
@@ -357,6 +358,10 @@ void fnGetLapTime()
   if (is_finished == true)
   {
 
+  }
+  else if (!is_started[0])
+  {
+    lap_time = 0.0;
   }
   else
   {

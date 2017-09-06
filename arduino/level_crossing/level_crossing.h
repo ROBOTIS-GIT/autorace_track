@@ -10,7 +10,7 @@
 /*******************************************************************************
 * Definitions
 *******************************************************************************/
-#define DISTANCE_THRESHOLD_PASS         650
+#define DISTANCE_THRESHOLD_PASS         500
 
 #define DXL_ID                          1
 #define DXL_POSITION_VALUE_CLOSED       3072              // Dynamixel will rotate between this value

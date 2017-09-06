@@ -148,25 +148,6 @@ public:
     msgDoInitStateTrafficLight.doIt = true;
 
     pubInitStateTrafficLight.publish(msgDoInitStateTrafficLight);
-    //
-    // std_msgs::String str;
-    //
-    // str.data = file_path;
-    //
-    // if (robot_num == ROBOT_NUMBER_TB3P)
-    // {
-    //   pub_play_sound_tb3p.publish(str);
-    // }
-    // else if (robot_num == ROBOT_NUMBER_TB3G)
-    // {
-    //   pub_play_sound_tb3g.publish(str);
-    // }
-    // else if (robot_num == ROBOT_NUMBER_TB3R)
-    // {
-    //   pub_play_sound_tb3r.publish(str);
-    // }
-
-    // ROS_INFO("%d", robot_num);
   }
 
   void pbTestStateTrafficLight()
@@ -174,42 +155,9 @@ public:
     msgDoTestStateTrafficLight.doIt = true;
 
     pubTestStateTrafficLight.publish(msgDoTestStateTrafficLight);
-    //
-    // std_msgs::String str;
-    //
-    // str.data = file_path;
-    //
-    // if (robot_num == ROBOT_NUMBER_TB3P)
-    // {
-    //   pub_play_sound_tb3p.publish(str);
-    // }
-    // else if (robot_num == ROBOT_NUMBER_TB3G)
-    // {
-    //   pub_play_sound_tb3g.publish(str);
-    // }
-    // else if (robot_num == ROBOT_NUMBER_TB3R)
-    // {
-    //   pub_play_sound_tb3r.publish(str);
-    // }
-
-    // ROS_INFO("%d", robot_num);
   }
 
 private:
-
-  // enum ROBOT_NUMBER
-  // {
-  //   TB3P = 0
-  //   , TB3G
-  //   , TB3R
-  // } robot_number;
-  //
-  // enum ITEM_NUMBER
-  // {
-  //   TB3P = 0
-  //   , TB3G
-  //   , TB3R
-  // } item_number;
 
   ros::NodeHandle nh_;
 
