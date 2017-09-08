@@ -152,19 +152,34 @@ void QNode::cbReceiveSensorStateLevelCrossing(const rbiz_autorace_msgs::SensorSt
 
 void QNode::cbReceiveSensorStateStopwatch(const rbiz_autorace_msgs::SensorStateStopwatch msgSensorStateStopwatch)
 {
-	std_msgs::String msg;
-	std::stringstream ss;
-	ss << "hello world " << msgSensorStateStopwatch.lap_time;
-	msg.data = ss.str();
-	// pubInitStateTrafficLight.publish(msg);
+	lap_time = msgSensorStateStopwatch.lap_time;
 
-	log(Info,std::string("I sent: ")+msg.data);
+	Q_EMIT fnUpdateLapTime();
+	if (msgSensorStateStopwatch.vehicle_state == 0)
+	{
+		stopwatchStatus = STAY;
+	}
+	else if (msgSensorStateStopwatch.vehicle_state == 1)
+	{
+		stopwatchStatus = STARTED;
+	}
+	else if (msgSensorStateStopwatch.vehicle_state == 4)
+	{
+		stopwatchStatus = FINISHED;
+	}
+	// std_msgs::String msg;
+	// std::stringstream ss;
+	// ss << "hello world " << msgSensorStateStopwatch.lap_time;
+	// msg.data = ss.str();
+	// // pubInitStateTrafficLight.publish(msg);
+	//
+	// log(Info,std::string("I sent: ")+msg.data);
 }
 
 
 void QNode::log( const LogLevel &level, const std::string &msg) {
-	logging_model.insertRows(logging_model.rowCount(),1);
-	std::stringstream logging_model_msg;
+	// logging_model.insertRows(logging_model.rowCount(),1);
+	// std::stringstream logging_model_msg;
 	switch ( level ) {
 		case(Debug) : {
 				ROS_DEBUG_STREAM(msg);
@@ -192,9 +207,15 @@ void QNode::log( const LogLevel &level, const std::string &msg) {
 				break;
 		}
 	}
-	QVariant new_row(QString(logging_model_msg.str().c_str()));
-	logging_model.setData(logging_model.index(logging_model.rowCount()-1),new_row);
+	// QVariant new_row(QString(logging_model_msg.str().c_str()));
+	// logging_model.setData(logging_model.index(logging_model.rowCount()-1),new_row);
 	// Q_EMIT loggingUpdated(); // used to readjust the scrollbar
 }
+
+// void QNode::fnPassLapTime(double lap_time)
+// {
+// 	Q_EMIT loggingUpdated();
+// }
+
 
 }  // namespace rbiz_autorace_monitor

@@ -127,7 +127,7 @@
        <property name="title">
         <string>Control Panel</string>
        </property>
-       <widget class="QPushButton" name="pButtonActiveMode">
+       <widget class="QPushButton" name="pButtonAllActiveMode">
         <property name="geometry">
          <rect>
           <x>340</x>
@@ -142,10 +142,10 @@
          </font>
         </property>
         <property name="text">
-         <string>Action Mode</string>
+         <string>All Action Mode</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pButtonTestMode">
+       <widget class="QPushButton" name="pButtonAllTestMode">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -160,10 +160,10 @@
          </font>
         </property>
         <property name="text">
-         <string>Test Mode</string>
+         <string>All Test Mode</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pButtonInitStopWatch">
+       <widget class="QPushButton" name="pButtonInitStopwatch">
         <property name="geometry">
          <rect>
           <x>10</x>

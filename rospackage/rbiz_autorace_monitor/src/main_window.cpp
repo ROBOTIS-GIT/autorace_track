@@ -53,13 +53,22 @@ MainWindow::MainWindow(int argc, char** argv, QWidget *parent)
 	// ui.tab_manager->setCurrentIndex(0); // ensure the first tab is showing - qt-designer should have this already hardwired, but often loses it (settings?).
     QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
 
+		QObject::connect(&qnode, SIGNAL(fnUpdateLapTime()), this, SLOT(fnCheckLapTime()));
+
+
+		// QObject::connect(&qnode, SIGNAL(loggingUpdated()), this, SLOT(fnUpdateLapTime()));
+
+
 	/*********************
 	** Logging
 	**********************/
 	// ui.view_logging->setModel(qnode.loggingModel());
     // QObject::connect(&qnode, SIGNAL(loggingUpdated()), this, SLOT(updateLoggingView()));
 
-
+		// while(1)
+		// {
+		// 	;
+		// }
 
   // if ( ui.checkbox_remember_settings->isChecked() ) {
   	// on_button_connect_clicked(true);
@@ -84,6 +93,54 @@ MainWindow::~MainWindow() {}
  * These triggers whenever the button is clicked, regardless of whether it
  * is already checked or not.
  */
+
+void MainWindow::fnCheckLapTime() {
+	// ui.lcdNumberMin1->display(((int)((int)(qnode.lap_time / 600000.0))));
+	if ((int)((int)(qnode.lap_time / 60000.0) % 10) < 5)
+	{
+		ui.lcdNumberMin2->display(((int)((int)(qnode.lap_time / 60000.0) % 10)));
+		ui.lcdNumberSec1->display(((int)((int)(qnode.lap_time / 10000.0) % 6)));
+		ui.lcdNumberSec2->display(((int)((int)(qnode.lap_time / 1000.0) % 10)));
+		ui.lcdNumberTri1->display(((int)((double)((int)qnode.lap_time % 1000) / 100.0)));
+	}
+	else
+	{
+		ui.lcdNumberMin2->display(((int)((int)(qnode.lap_time / 60000.0) % 10)));
+		ui.lcdNumberSec1->display(0);
+		ui.lcdNumberSec2->display(0);
+		ui.lcdNumberTri1->display(0);
+
+		ui.lcdNumberMin1->setPalette(Qt::red);
+		ui.lcdNumberMin2->setPalette(Qt::red);
+		ui.lcdNumberSec1->setPalette(Qt::red);
+		ui.lcdNumberSec2->setPalette(Qt::red);
+		ui.lcdNumberTri1->setPalette(Qt::red);
+		ui.lcdNumberTri2->setPalette(Qt::red);
+		ui.lcdNumberMin1->setAutoFillBackground(true);
+		ui.lcdNumberMin2->setAutoFillBackground(true);
+		ui.lcdNumberSec1->setAutoFillBackground(true);
+		ui.lcdNumberSec2->setAutoFillBackground(true);
+		ui.lcdNumberTri1->setAutoFillBackground(true);
+		ui.lcdNumberTri2->setAutoFillBackground(true);
+	}
+
+	if (qnode.stopwatchStatus == 2)
+	{
+		ui.lcdNumberMin1->setPalette(Qt::green);
+		ui.lcdNumberMin2->setPalette(Qt::green);
+		ui.lcdNumberSec1->setPalette(Qt::green);
+		ui.lcdNumberSec2->setPalette(Qt::green);
+		ui.lcdNumberTri1->setPalette(Qt::green);
+		ui.lcdNumberTri2->setPalette(Qt::green);
+		ui.lcdNumberMin1->setAutoFillBackground(true);
+		ui.lcdNumberMin2->setAutoFillBackground(true);
+		ui.lcdNumberSec1->setAutoFillBackground(true);
+		ui.lcdNumberSec2->setAutoFillBackground(true);
+		ui.lcdNumberTri1->setAutoFillBackground(true);
+		ui.lcdNumberTri2->setAutoFillBackground(true);
+	}
+
+}
 
 void MainWindow::on_pButtonMissionTrafficLight_clicked(bool check)
 {
@@ -149,12 +206,53 @@ void MainWindow::on_pButtonMissionTunnel_clicked(bool check)
 	}
 }
 
+void MainWindow::on_pButtonAllTestMode_clicked(bool check)
+{
+	qnode.pbTestStateTrafficLight();
+
+	qnode.pbTestStateLevelCrossing();
+}
+
+void MainWindow::on_pButtonAllActiveMode_clicked(bool check)
+{
+	qnode.pbInitStateTrafficLight();
+
+	qnode.pbInitStateLevelCrossing();
+}
 
 void MainWindow::on_pButtonInitStopwatch_clicked(bool check)
 {
-	ui.pButtonMissionTunnel->setStyleSheet("background-color: rgb(255,0,0)");
+	qnode.pbInitStateStopwatch();
+
+	ui.lcdNumberMin1->setAutoFillBackground(false);
+	ui.lcdNumberMin2->setAutoFillBackground(false);
+	ui.lcdNumberSec1->setAutoFillBackground(false);
+	ui.lcdNumberSec2->setAutoFillBackground(false);
+	ui.lcdNumberTri1->setAutoFillBackground(false);
+	ui.lcdNumberTri2->setAutoFillBackground(false);
+}
+
+void MainWindow::on_pButtonInitAllTerminals_clicked(bool check)
+{
+	qnode.pbInitStateTrafficLight();
+
+	qnode.pbInitStateLevelCrossing();
+}
+
+void MainWindow::on_pButtonInitAllStatus_clicked(bool check)
+{
+	qnode.pbInitStateTrafficLight();
+
+	qnode.pbInitStateLevelCrossing();
 
 	qnode.pbInitStateStopwatch();
+
+	ui.lcdNumberMin1->setAutoFillBackground(false);
+	ui.lcdNumberMin2->setAutoFillBackground(false);
+	ui.lcdNumberSec1->setAutoFillBackground(false);
+	ui.lcdNumberSec2->setAutoFillBackground(false);
+	ui.lcdNumberTri1->setAutoFillBackground(false);
+	ui.lcdNumberTri2->setAutoFillBackground(false);
 }
 
 // void MainWindow::on_button_connect_clicked(bool check ) {

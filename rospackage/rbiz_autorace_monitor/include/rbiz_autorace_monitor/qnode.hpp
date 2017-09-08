@@ -46,6 +46,22 @@ public:
 	bool init(const std::string &master_url, const std::string &host_url);
 	void run();
 
+  enum StopwatchStatus {
+    STAY,
+    STARTED,
+    FINISHED
+  } stopwatchStatus;
+
+  double lap_time = 0.0;
+
+
+  // explicit MyClass(bool willSleep, QString name, QObject *parent = 0);
+  // void updateCount();
+  // QTimer *timer;
+  // int count;
+  // bool m_wantToSleep;
+
+
 	/*********************
 	** Logging
 	**********************/
@@ -69,11 +85,13 @@ public:
   void cbReceiveSensorStateStopwatch(const rbiz_autorace_msgs::SensorStateStopwatch msgSensorStateStopwatch);
 
 
-	QStringListModel* loggingModel() { return &logging_model; }
+	// QStringListModel* loggingModel() { return &logging_model; }
 	void log( const LogLevel &level, const std::string &msg);
 
 Q_SIGNALS:
-	void loggingUpdated();
+  void fnUpdateLapTime();
+// void fnPassLapTime();
+	// void loggingUpdated();
     void rosShutdown();
 
 private:
@@ -105,7 +123,7 @@ private:
   rbiz_autorace_msgs::DoIt msgDoTestStateLevelCrossing;
 
 
-  QStringListModel logging_model;
+  // QStringListModel logging_model;
 };
 
 }  // namespace rbiz_autorace_monitor

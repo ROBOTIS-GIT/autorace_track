@@ -52,7 +52,18 @@ public Q_SLOTS:
 	void on_pButtonMissionParkingLot_clicked(bool check);
 	void on_pButtonMissionTunnel_clicked(bool check);
 
+	void on_pButtonAllTestMode_clicked(bool check);
+
+	void on_pButtonAllActiveMode_clicked(bool check);
+
+
 	void on_pButtonInitStopwatch_clicked(bool check);
+
+	void on_pButtonInitAllTerminals_clicked(bool check);
+
+	void on_pButtonInitAllStatus_clicked(bool check);
+
+	void fnCheckLapTime();
 
 	// void on_button_connect_clicked(bool check );
 	// void on_checkbox_use_environment_stateChanged(int state);
@@ -60,6 +71,7 @@ public Q_SLOTS:
     /******************************************
     ** Manual connections
     *******************************************/
+	// void fnUpdateLapTime();
     // void updateLoggingView(); // no idea why this can't connect automatically
 
 private:
