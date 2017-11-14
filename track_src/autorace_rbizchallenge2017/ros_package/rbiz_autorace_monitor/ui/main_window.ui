@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindowDesign</class>
+ <widget class="QMainWindow" name="MainWindowDesign">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1796</width>
+    <height>1030</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QRosApp</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/images.qrc">
+    <normaloff>:/images/icon.png</normaloff>:/images/icon.png</iconset>
+  </property>
+  <property name="locale">
+   <locale language="English" country="Australia"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout">
+    <item>
+     <widget class="QGroupBox" name="groupBox1">
+      <property name="title">
+       <string>rbiz_autorace_monitor</string>
+      </property>
+      <widget class="QGroupBox" name="groupBox2">
+       <property name="geometry">
+        <rect>
+         <x>1100</x>
+         <y>440</y>
+         <width>671</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Pass/Fail/Init/Test</string>
+       </property>
+       <widget class="QRadioButton" name="rButtonMissionPass">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>131</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>39</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Pass</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rButtonMissionFail">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>40</y>
+          <width>121</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>39</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Fail</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rButtonMissionInit">
+        <property name="geometry">
+         <rect>
+          <x>390</x>
+          <y>40</y>
+          <width>111</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>39</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Init</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rButtonMissionTest">
+        <property name="geometry">
+         <rect>
+          <x>510</x>
+          <y>40</y>
+          <width>131</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>39</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Test</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox3">
+       <property name="geometry">
+        <rect>
+         <x>1100</x>
+         <y>570</y>
+         <width>671</width>
+         <height>431</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Control Panel</string>
+       </property>
+       <widget class="QPushButton" name="pButtonAllActiveMode">
+        <property name="geometry">
+         <rect>
+          <x>340</x>
+          <y>30</y>
+          <width>321</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>All Action Mode</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pButtonAllTestMode">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>321</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>All Test Mode</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pButtonInitStopwatch">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>130</y>
+          <width>651</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Init Stopwatch</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pButtonInitAllTerminals">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>230</y>
+          <width>651</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Init All Terminals</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pButtonInitAllStatus">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>330</y>
+          <width>651</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Init All Status</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>29</y>
+         <width>1761</width>
+         <height>401</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Stopwatch</string>
+       </property>
+       <widget class="QLabel" name="label2">
+        <property name="geometry">
+         <rect>
+          <x>840</x>
+          <y>30</y>
+          <width>101</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>51</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>sec</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label1">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>30</y>
+          <width>111</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>50</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>min</string>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="lcdNumberTri2">
+        <property name="geometry">
+         <rect>
+          <x>1400</x>
+          <y>90</y>
+          <width>161</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>37</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="lcdNumberSec1">
+        <property name="geometry">
+         <rect>
+          <x>720</x>
+          <y>90</y>
+          <width>161</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>37</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="lcdNumberMin1">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>90</y>
+          <width>161</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>37</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="lcdNumberSec2">
+        <property name="geometry">
+         <rect>
+          <x>890</x>
+          <y>90</y>
+          <width>161</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>37</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="lcdNumberTri1">
+        <property name="geometry">
+         <rect>
+          <x>1230</x>
+          <y>90</y>
+          <width>161</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>37</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLCDNumber" name="lcdNumberMin2">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>90</y>
+          <width>161</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>37</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="digitCount">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>610</x>
+          <y>60</y>
+          <width>51</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>184</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label3">
+        <property name="geometry">
+         <rect>
+          <x>1120</x>
+          <y>60</y>
+          <width>51</width>
+          <height>301</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>184</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>:</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>440</y>
+         <width>1081</width>
+         <height>561</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Mission Status</string>
+       </property>
+       <widget class="QPushButton" name="pButtonMissionTrafficLight">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>521</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>50</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Traffic Light</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pButtonMissionLevelCrossing">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>30</y>
+          <width>521</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>50</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Level Crossing</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pButtonMissionParkingLot">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>300</y>
+          <width>521</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>50</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Parking Lot</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pButtonMissionTunnel">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>300</y>
+          <width>521</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>50</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Tunnel</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="action_Preferences">
+   <property name="text">
+    <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About &amp;Qt</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources/images.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_Quit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowDesign</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
