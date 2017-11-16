@@ -14,3 +14,5 @@ RBiz TurtleBot3 Autonomous Driving Challenge Tool packages
 ```
 ~/catkin_ws/src/
 ```
+
+## If you need more information, please contact `rwjung@robotis.com`

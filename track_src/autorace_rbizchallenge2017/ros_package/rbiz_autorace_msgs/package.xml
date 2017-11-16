@@ -10,7 +10,6 @@
   <maintainer email="rwjung@robotis.com">Leon Ryuwoon Jung</maintainer>
   <url type="bugtracker">https://github.com/ROBOTIS-GIT/turtlebot3/issues</url>
   <url type="repository">https://github.com/ROBOTIS-GIT/turtlebot3</url>
-  <url type="website">http://wiki.ros.org/rbiz_autorace_msgs</url>
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>std_srvs</build_depend>
