@@ -1,8 +1,8 @@
-# rbiz_autorace
+# autorace_rbiz_challenge_2017
 RBiz TurtleBot3 Autonomous Driving Challenge track model data
 
-- Here we have `.ips`, `.dwg` file. You can get size information of each parts
+- Here we have `.stp`, `.ips`, `.dwg` file. You can get size information of each parts
 
-- Go `assembled` to see the examples of entire map  
+- Go `assembled` to see the example view of entire map  
 
 ## If you need more information, please contact `rwjung@robotis.com`
