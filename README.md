@@ -3,10 +3,8 @@
 # AutoRace Track sources
 Sources for AutoRace Track settings
 
-* Get 3D CAD data of the race track in track_model folder
-* Get Sources of AutoRace Referee system run by OpenCR - ROS
-
-Follow the description written in README.md of each folder
+* Get 3D CAD model data of the race track from the folder
+* Get Sources of AutoRace Referee system run in OpenCR board from [autorace_referee](https://github.com/ROBOTIS-GIT/autorace_referee) 
 
 ## RBiz Challenge 2017 TurtleBot3 AutoRace
 
