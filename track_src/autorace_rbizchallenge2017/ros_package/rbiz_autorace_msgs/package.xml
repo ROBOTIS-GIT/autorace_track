@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>rbiz_autorace_msgs</name>
+  <version>0.0.1</version>
+  <description>
+    Message and service types: custom messages and services for R-Biz Autorace Challenge tools
+  </description>
+  <license>Apache License 2.0</license>
+  <author email="rwjung@robotis.com">Leon Ryuwoon Jung</author>
+  <maintainer email="rwjung@robotis.com">Leon Ryuwoon Jung</maintainer>
+  <url type="bugtracker">https://github.com/ROBOTIS-GIT/turtlebot3/issues</url>
+  <url type="repository">https://github.com/ROBOTIS-GIT/turtlebot3</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>std_srvs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+</package>

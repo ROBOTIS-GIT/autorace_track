@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+  <name>rbiz_autorace</name>
+  <version>0.0.1</version>
+  <description>The rbiz_autorace package</description>
+  <author email="rwjung@robotis.com">Leon Ryuwoon Jung</author>
+  <maintainer email="rwjung@robotis.com">Leon Ryuwoon Jung</maintainer>
+  <license>Apache License 2.0</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rbiz_autorace_msgs</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rbiz_autorace_msgs</run_depend>
+</package>
