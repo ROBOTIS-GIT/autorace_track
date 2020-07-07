@@ -5,4 +5,4 @@ RBiz TurtleBot3 Autonomous Driving Challenge track model data
 
 - Go `assembled` to see the example view of entire map  
 
-## If you need more information, please contact `kkjong@robotis.com`
+## If you need more information, please contact `contactus2@robotis.com`
