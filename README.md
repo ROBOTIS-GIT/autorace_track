@@ -28,4 +28,4 @@ Sources for AutoRace Track settings
 
 ## AutoRace 2018 (Maybe in ROSCon2018?)
 
-## If you need more information, please contact `kkjong@robotis.com`
+## If you need more information, please contact `contactus2@robotis.com`
